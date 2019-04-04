@@ -1,0 +1,20 @@
+server:
+  compression:
+    enabled: true
+  port: 8080
+
+spring:
+  application.name: speaker
+  jmx.enabled: false
+
+spring.rabbitmq:
+  host: ${RABBITMQ_HOST:localhost}
+  port: ${RABBITMQ_PORT:5672}
+
+spring.cloud.stream:
+  defaultBinder: rabbit
+
+spring.cloud.stream.bindings:
+  speaker:
+    destination: ${SPEAKER_TOPIC:speaker}
+
