@@ -23,13 +23,14 @@ public class Speaker {
 
     public Mono<SpeechType> say(Speech speech){
         return detector.detect(speech)
-                .map(type -> {
+                .flatMap(type -> {
                     if (type == SpeechType.ORDER) {
-                        order();
+                        return order()
+                                .then(Mono.just(type));
                     } else {
-                        askQuestion(new Question(speech.getText()));
+                        return askQuestion(new Question(speech.getText()))
+                                .then(Mono.just(type));
                     }
-                    return type;
                 });
     }
 
