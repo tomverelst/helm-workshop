@@ -58,7 +58,13 @@ export class SpeechRecognitionService {
     });
   }
 
-  DestroySpeechObject() {
+  DestroySpeechObject(): void {
+    if (this.speechRecognition) {
+      this.speechRecognition.stop();
+    }
+  }
+
+  stopRecording(): void {
     if (this.speechRecognition) {
       this.speechRecognition.stop();
     }

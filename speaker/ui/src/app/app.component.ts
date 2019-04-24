@@ -1,53 +1,87 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SpeechRecognitionService} from './speech.service';
+import {SpeakerService} from './speaker.service';
+import {HttpClientModule} from '@angular/common/http';
+import {Observable, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, flatMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/internal/operators/switchMap';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [SpeechRecognitionService]
+  providers: [SpeechRecognitionService, SpeakerService, HttpClientModule]
 })
 export class AppComponent implements OnInit, OnDestroy {
-  showSearchButton: boolean;
+  listening: boolean;
+  speech$ = new Subject<string>();
   speechData: string;
+  icon: string;
 
-  constructor(private speechRecognitionService: SpeechRecognitionService) {
-    this.showSearchButton = true;
-    this.speechData = '';
+  constructor(
+      private speechRecognitionService: SpeechRecognitionService,
+      private speakerService: SpeakerService) {
+    this.listening = false;
   }
 
   ngOnInit() {
-    console.log('hello');
+    this.icon = 'mic_off';
+    this.speech$.subscribe(data => this.speak(data));
+  }
+
+  speak(data: string): void {
+    this.speechData = data;
+    this.speakerService.speak({
+      text: data
+    });
   }
 
   ngOnDestroy() {
     this.speechRecognitionService.DestroySpeechObject();
   }
 
+  toggleSpeech(): void {
+    if (this.listening) {
+      this.disableSpeech();
+    } else {
+      this.activateSpeech();
+    }
+  }
+
   activateSpeech(): void {
-    this.showSearchButton = false;
+    this.listening = true;
+    this.icon = 'mic';
 
     this.speechRecognitionService.record()
         .subscribe(
             // listener
             (value) => {
-              this.speechData = value;
-              console.log(value);
+              this.speech$.next(value);
             },
             // errror
             (err) => {
-              console.log(err);
-              if (err.error === 'no-speech') {
-                console.log('--restarting service--');
-                this.activateSpeech();
-              }
+              // console.log(err);
+              // if (err.error === 'no-speech') {
+              //   console.log('--restarting service--');
+              //   this.activateSpeech();
+              // }
+              this.activateSpeech();
             },
             // completion
             () => {
-              this.showSearchButton = true;
-              console.log('--complete--');
+              // this.listening = false;
+              // this.icon = 'mic_off';
+              // console.log('--complete--');
+              // this.activateSpeech();
               this.activateSpeech();
             });
+  }
+
+  disableSpeech(): void {
+    console.log('Disabling...' + this.icon);
+    this.speechRecognitionService.stopRecording();
+    this.listening = false;
+    this.icon = 'mic_off';
   }
 
 }
