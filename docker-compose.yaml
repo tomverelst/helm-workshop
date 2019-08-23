@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.7.17
+
+  speaker:
+    build: ./speaker/.
+    ports:
+      - 8080
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+
+
+
