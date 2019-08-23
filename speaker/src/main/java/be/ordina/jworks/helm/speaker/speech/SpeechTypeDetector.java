@@ -18,6 +18,13 @@ public class SpeechTypeDetector {
     private static final ImmutableSet<String> ORDER_LIKE_WORDS =
             ImmutableSet.of("other", "louder", "older", "old", "the", "orders");
 
+    private static final ImmutableSet<String> INTERROGATIVE_WORDS =
+            ImmutableSet.of("why", "how", "which", "what", "who", "whose", "whom", "where",
+                    "whither", "whence", "whether", "whatsoever");
+
+    private static final ImmutableSet<String> INTERROGATIVE_PARTICLE =
+            ImmutableSet.of("are", "do", "does", "can", "aren't", "don't", "can't", "doesn't");
+
     private static final Splitter WORD_SPLITTER = Splitter
             .on(Pattern.compile("[\\s.:?,!;'\"@#$&()\\[\\]=]+('(s|d|t|ve|m))?"))
             .omitEmptyStrings()
@@ -29,22 +36,39 @@ public class SpeechTypeDetector {
         return Mono.just(speech)
                 .map(Speech::getText)
                 .map(txt -> {
+
                     if(soundsLikeOrder(txt)){
                         return SpeechType.ORDER;
-                    } else {
+                    } else if(soundsLikeQuestion(txt)){
                         return SpeechType.QUESTION;
+                    } else {
+                        return SpeechType.UNKNOWN;
                     }
                 });
     }
 
     private boolean soundsLikeOrder(String text){
-        var words = getWords(text);
+        final var words = getWords(text);
 
-        var score = words.stream()
+        final var score = words.stream()
                .mapToDouble(this::wordScore)
                .sum();
 
-       return score >= TRESHOLD * words.size();
+        return score >= TRESHOLD * words.size();
+    }
+
+    private boolean soundsLikeQuestion(String text){
+        final var words = getWords(text);
+        final var firstWord = words.get(0);
+
+        if(INTERROGATIVE_PARTICLE.contains(firstWord)){
+            return true;
+        }
+        if(INTERROGATIVE_WORDS.contains(firstWord)){
+            return true;
+        }
+
+        return false;
     }
 
     private double wordScore(String w) {

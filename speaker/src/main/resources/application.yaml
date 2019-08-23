@@ -15,6 +15,7 @@ spring.cloud.stream:
   defaultBinder: rabbit
 
 spring.cloud.stream.bindings:
-  speaker:
+  speak:
     destination: ${SPEAKER_TOPIC:speaker}
+    content-type: application/json
 

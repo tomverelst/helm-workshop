@@ -1,14 +1,18 @@
 package be.ordina.jworks.helm.speaker;
 
-import be.ordina.jworks.helm.speaker.speech.Speech;
-import be.ordina.jworks.helm.speaker.speech.SpeechType;
-import be.ordina.jworks.helm.speaker.speech.SpeechTypeDetector;
+import be.ordina.jworks.helm.speaker.speech.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 @Component
 public class Speaker {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Speaker.class);
 
     private final MessageChannels channels;
 
@@ -17,37 +21,45 @@ public class Speaker {
     public Speaker(
             final MessageChannels channels,
             final SpeechTypeDetector detector) {
-        this.channels = channels;
-        this.detector = detector;
+        this.channels = Objects.requireNonNull(channels, "channels is required");
+        this.detector = Objects.requireNonNull(detector, "detector is required");
     }
 
-    public Mono<SpeechType> say(Speech speech){
+    public Mono<Speech> say(final Speech speech){
         return detector.detect(speech)
-                .flatMap(type -> {
-                    if (type == SpeechType.ORDER) {
-                        return order()
-                                .then(Mono.just(type));
-                    } else {
-                        return askQuestion(new Question(speech.getText()))
-                                .then(Mono.just(type));
-                    }
-                });
+                .flatMap(type -> handle(speech.withType(type)));
     }
 
-    public Mono<Void> order(){
-        return Mono.defer(() ->
-                Mono.just(channels.speaker().send(MessageBuilder.withPayload(new ShoutOrder()).build())))
-                .then();
+    private Mono<Speech> handle(
+            final Speech speech) {
+        if (speech.getType() == SpeechType.ORDER) {
+            return order();
+        } else {
+            return askQuestion(new Question(speech.getText()));
+        }
     }
 
-    public Mono<Void> askQuestion(Question question){
+    public Mono<Speech> order(){
+        return publish(new ShoutOrder());
+    }
+
+    public Mono<Speech> askQuestion(Question question){
         return Mono.defer(() -> {
             if(question == null){
                 return Mono.error(new InvalidQuestionException());
             } else {
-                return Mono.just(channels.speaker().send(MessageBuilder.withPayload(question).build()));
+                return publish(question);
             }
-        }).then();
+        });
+    }
+
+    private Mono<Speech> publish(Speech speech){
+        return Mono.just(speech)
+                .map(s -> {
+                    LOGGER.info("Publishing speech {}", speech);
+                    channels.speak().send(MessageBuilder.withPayload(speech).build());
+                    return speech;
+                });
     }
 
 }

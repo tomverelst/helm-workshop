@@ -2,9 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SpeechRecognitionService} from './speech.service';
 import {SpeakerService} from './speaker.service';
 import {HttpClientModule} from '@angular/common/http';
-import {Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, flatMap} from 'rxjs/operators';
-import {switchMap} from 'rxjs/internal/operators/switchMap';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -41,15 +39,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   toggleSpeech(): void {
+    this.listening = !this.listening;
+    this.toggleSpeechRecognition();
+  }
+
+  private toggleSpeechRecognition() {
     if (this.listening) {
-      this.disableSpeech();
-    } else {
       this.activateSpeech();
+    } else {
+      this.disableSpeech();
     }
   }
 
   activateSpeech(): void {
-    this.listening = true;
     this.icon = 'mic';
 
     this.speechRecognitionService.record()
@@ -60,20 +62,11 @@ export class AppComponent implements OnInit, OnDestroy {
             },
             // errror
             (err) => {
-              // console.log(err);
-              // if (err.error === 'no-speech') {
-              //   console.log('--restarting service--');
-              //   this.activateSpeech();
-              // }
-              this.activateSpeech();
+              this.toggleSpeechRecognition();
             },
             // completion
             () => {
-              // this.listening = false;
-              // this.icon = 'mic_off';
-              // console.log('--complete--');
-              // this.activateSpeech();
-              this.activateSpeech();
+              this.toggleSpeechRecognition();
             });
   }
 

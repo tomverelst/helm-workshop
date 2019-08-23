@@ -1,0 +1,46 @@
+i {
+    font-size: 30vh;
+}
+
+.speaker {
+    width: 100vw;
+    height: 100vh;
+}
+
+.mic {
+    margin: 33vh auto;
+    text-align: center;
+}
+
+.mic.listening {
+    color: red;
+    transition: color 0.5s ease;
+
+    animation-name: listening;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes listening {
+    0% {
+        color: #aa0000;
+    }
+    50% {
+        color: #ff0000;
+    }
+    100% {
+        color: #aa0000;
+    }
+}
+
+.mic.off {
+    color: grey;
+    transition: color 0.5s ease;
+}
+
+
+#btnMicrophone {
+    border-radius: 50%;
+    height: 33vh;
+    width: 33vh;
+}

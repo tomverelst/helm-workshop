@@ -30,9 +30,9 @@ class SpeechTypeDetectorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "This is an older question",
-            "Make this louder",
-            "This is not an order"
+            "Why are you such a crybaby?",
+            "Where did that window licker go?",
+            "Whose badjas is this?"
     })
     public void question(String text){
         is(text, SpeechType.QUESTION);

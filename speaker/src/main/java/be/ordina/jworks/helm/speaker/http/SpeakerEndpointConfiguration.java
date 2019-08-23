@@ -1,6 +1,6 @@
 package be.ordina.jworks.helm.speaker.http;
 
-import be.ordina.jworks.helm.speaker.Question;
+import be.ordina.jworks.helm.speaker.speech.Question;
 import be.ordina.jworks.helm.speaker.Speaker;
 import be.ordina.jworks.helm.speaker.speech.Speech;
 import org.springframework.context.annotation.Bean;

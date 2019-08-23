@@ -1,14 +1,13 @@
-
-<div class="container-fluid">
-
-  <button id="btnMicrophone" mat-button (click)="toggleSpeech()">
-    <i class="material-icons">
-      {{icon}}
-    </i>
-  </button>
-
+<div class="speaker">
+  <div [ngClass]="listening ? 'mic listening' : 'mic off'">
+    <button id="btnMicrophone" mat-button (click)="toggleSpeech()">
+      <i class="material-icons">
+        {{icon}}
+      </i>
+    </button>
+  </div>
   <div>
     {{speechData}}
   </div>
-
 </div>
+

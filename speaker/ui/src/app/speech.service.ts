@@ -23,7 +23,7 @@ export class SpeechRecognitionService {
       // this.speechRecognition = SpeechRecognition;
       this.speechRecognition.continuous = true;
       // this.speechRecognition.interimResults = true;
-      this.speechRecognition.lang = 'en-us';
+      this.speechRecognition.lang = 'en-uk';
       this.speechRecognition.maxAlternatives = 1;
 
       this.speechRecognition.onresult = speech => {
