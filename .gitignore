@@ -2,7 +2,7 @@
 *.iml
 *.ipr
 *.iws
-deployment/helm/
+deployment/
 
 
 target/
