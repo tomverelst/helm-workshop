@@ -2,8 +2,6 @@
 *.iml
 *.ipr
 *.iws
-deployment/
-
 
 target/
 pom.xml.tag
