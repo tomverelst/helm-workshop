@@ -30,14 +30,32 @@ Use this for the Ingress (see deployment/k8s/member.yaml).
 
 5. Install the Chart. Use your own name as release name,
 override the member.name property with your own name,
-and use a custom ingress path.
+use a custom ingress path,
+and set the RabbitMQ credentials.
 Example:
 
 ```
-$ helm install member --name tom --set member.name=Tom --set ingress.path=tom
+$ helm install member --name tom \ 
+  --set member.name=Tom \
+  --set ingress.path=tom \
+  --set rabbitmq.username=something \
+  --set rabbitmq.password=something
 ```
 
-Go to [https://console.cloud.google.com/kubernetes/discovery?project=cloud-native-deployment&service_list_tablesize=50](https://console.cloud.google.com/kubernetes/discovery?project=cloud-native-deployment&service_list_tablesize=50)
+Optionally create a separate settings YAML that you can use:
+
+```
+# values.override.yaml
+member.name: Tom
+ingress.path: tom
+rabbitmq:
+    username: something
+    password: something
+
+$ helm install member --name tom -f values.override.yaml
+```
+
+6. Go to [https://console.cloud.google.com/kubernetes/discovery?project=cloud-native-deployment&service_list_tablesize=50](https://console.cloud.google.com/kubernetes/discovery?project=cloud-native-deployment&service_list_tablesize=50)
 and find your ingress.
 
 The application should be available at http://<ip of the load balancer/<your-ingress-path>/index.html
