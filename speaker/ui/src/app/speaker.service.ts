@@ -9,7 +9,7 @@ export class SpeakerService {
   constructor(private http: HttpClient) { }
 
   speak(speech: Speech): void {
-    this.http.post<Speech>('/say', speech).subscribe((data: Speech) => {
+    this.http.post<Speech>('say', speech).subscribe((data: Speech) => {
       console.log('Got response from backend: ' + data);
     });
   }

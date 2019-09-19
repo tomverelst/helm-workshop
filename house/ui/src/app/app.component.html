@@ -1,0 +1,47 @@
+<div class="house">
+  <div class="left">
+    <div class="motion">
+      <div class="question">{{motion.question}}</div>
+      <div class="results">
+        <div class="ayes">
+          <span class="number">{{motion.ayes}}</span>
+          <span class="emoji">👍</span>
+        </div>
+        <div class="noes">
+          <span class="number">{{motion.noes}}</span>
+          <span class="emoji">👎</span>
+        </div>
+      </div>
+    </div>
+    <div class="messages">
+      <div class="message" *ngFor="let msg of messages">
+        <div class="name" *ngIf="msg.name">
+          {{ msg.name }}:
+        </div>
+        <div class="text" *ngIf="msg.text">
+          {{ msg.text }}
+        </div>
+        <div class="image" *ngIf="msg.image">
+          <img src="{{ msg.image }}" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="members">
+      <div *ngFor="let item of members" class="member">
+        <div class="avatar"></div>
+        <div class="name">{{item.member.name}}</div>
+        <div class="vote" *ngIf="item.vote == 'AYE'">
+          <span class="emoji">👍</span>
+        </div>
+        <div class="vote" *ngIf="item.vote == 'NO'">
+          <span class="emoji">👎</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

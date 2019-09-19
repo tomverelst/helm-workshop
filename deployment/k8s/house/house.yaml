@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: house
+    app: houseofcommons
+  name: house
+spec:
+  selector:
+    matchLabels:
+      component: house
+      app: houseofcommons
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: house
+        app: houseofcommons
+    spec:
+      containers:
+        - name: house
+          image: eu.gcr.io/cloud-native-deployment/house
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: RABBITMQ_HOST
+              value: "rabbitmq-rabbitmq-ha"
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQk_USERNAME
+              value: "guest"
+            - name: RABBITMQ_PASSWORD
+              value: "Ig9UGGT7iWiB2zFFVWbS8rAs"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: house
+    app: houseofcommons
+  name: house
+spec:
+  type: NodePort
+  ports:
+    - name: house-http
+      port: 8080
+      targetPort: 8080
+  selector:
+    component: house
+    app: houseofcommons
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: house-ingress
+  labels:
+    app: house
+    component: houseofcommons
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /house(/|$)(.*)
+            backend:
+              serviceName: house
+              servicePort: house-http

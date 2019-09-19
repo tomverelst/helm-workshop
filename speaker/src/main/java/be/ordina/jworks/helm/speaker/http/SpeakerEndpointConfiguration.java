@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -27,11 +28,16 @@ public class SpeakerEndpointConfiguration {
     RouterFunction<ServerResponse> routes() {
         return route(i(POST("/order")), this::order)
                 .andRoute(i(POST("/vote")), this::askQuestion)
-                .andRoute(i(POST("/say")), this::say);
+                .andRoute(i(POST("/say")), this::say)
+                .andRoute(i(GET("/")), this::index);
     }
 
     private static RequestPredicate i(final RequestPredicate target) {
         return new CaseInsensitiveRequestPredicate(target);
+    }
+
+    private Mono<ServerResponse> index(final ServerRequest request) {
+        return ServerResponse.ok().build();
     }
 
     private Mono<ServerResponse> say(final ServerRequest request) {

@@ -14,5 +14,24 @@ services:
     environment:
       - RABBITMQ_HOST=rabbitmq
 
+  house:
+    build: ./house/.
+    ports:
+      - 8080
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+
+  member:
+    build: ./member/.
+    ports:
+      - 8080
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - MEMBER_NAME=Tom
+
 
 

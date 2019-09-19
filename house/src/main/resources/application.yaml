@@ -1,0 +1,29 @@
+server:
+  compression:
+    enabled: true
+  port: 8080
+
+spring:
+  application.name: house
+  jmx.enabled: false
+
+spring.rabbitmq:
+  host: ${RABBITMQ_HOST:localhost}
+  port: ${RABBITMQ_PORT:5672}
+  username: ${RABBITMQ_USERNAME:guest}
+  password: ${RABBITMQ_PASSWORD:guest}
+
+spring.cloud.stream:
+  defaultBinder: rabbit
+
+spring.cloud.stream.bindings:
+  seat:
+    destination: ${SEAT_TOPIC:seat}
+    content-type: application/json
+  vote:
+    destination: ${VOTE_TOPE:vote}
+    content-type: application/json
+  speak:
+    destination: ${SPEAKER_TOPIC:speak}
+    content-type: application/json
+

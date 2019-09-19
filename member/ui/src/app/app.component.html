@@ -1,0 +1,16 @@
+<div class="member">
+  <div [ngClass]="listening ? 'mic listening' : 'mic off'">
+    <button id="btnMicrophone" mat-button (click)="toggleSpeech()">
+      <i class="material-icons">
+        {{icon}}
+      </i>
+    </button>
+  </div>
+  <div class="name">
+    {{name}}
+  </div>
+  <div>
+    {{speechData}}
+  </div>
+</div>
+
